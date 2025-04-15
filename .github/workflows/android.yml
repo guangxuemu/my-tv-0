@@ -1,0 +1,38 @@
+ 
+name: Build APK
+
+on:
+  push:
+    tags:
+      - 'v*'  # 触发标签推送（如 v1.0）
+    branches:
+      - main  # 主分支推送触发
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Grant Gradle permission
+        run: chmod +x ./gradlew  # 确保 gradlew 可执行 
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug  # 调试版构建 
+        env:
+          ORG_GRADLE_PROJECT_myTvConfig: ${{ secrets.CONFIG_OVERRIDE }}  # 自定义配置
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-tv-debug
+          path: app/build/outputs/apk/debug/*.apk  # 适配你的APK输出路径 
+ 
