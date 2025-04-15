@@ -1,5 +1,5 @@
  
-name: Build APK
+name: build
 
 on:
   push:
